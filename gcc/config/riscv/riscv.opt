@@ -124,6 +124,9 @@ Target Bool Var(riscv_mrelax) Init(1)
 Take advantage of linker relaxations to reduce the number of instructions
 required to materialize symbol addresses.
 
+mhipaic-x-arith
+Target Report Mask(HIPAIC_EXTENDED_ARITH)
+
 Mask(64BIT)
 
 Mask(MUL)

@@ -577,6 +577,22 @@
 ;;
 ;;  ....................
 ;;
+;;	HIPAIC EXTENDED ARITH
+;;
+;;  ....................
+;;
+(define_insn "riscv_hipaic_mulsi"
+  [(set (match_operand:SI 0 "register_operand" "=r")
+	(mult:SI (match_operand:SI 1 "register_operand" " r")
+		 (match_operand:SI 2 "register_operand" " r")))]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  { return TARGET_64BIT ? "mulw\t%0,%1,%2" : "mul\t%0,%1,%2"; }
+  [(set_attr "type" "imul")
+   (set_attr "mode" "SI")])
+
+;;
+;;  ....................
+;;
 ;;	MULTIPLICATION
 ;;
 ;;  ....................
