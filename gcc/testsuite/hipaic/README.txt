@@ -15,9 +15,19 @@ You can input different numbers and test. Some useful flags to get more debug in
 
 
  $DIR/riscv32-unknown-elf-g++ -mhipaic-x-arith -O2 -S addmul2.cc
-Look at addmul2.s you can see that there's no call to f(), all inlined to be just mul, and the two mul for the first printf() are optimized to be just one. If you make "f()" to be "static" then it won't generate a function f at all.
+Look at addmul2.s you can see that there's no call to f(), all inlined to be just mul, and the two mul for the first printf() are optimized to be just one. If you make "f()" to be "static" then it won't generate a function f at all. NOTE that "x*3" and "y*2" are implemented by addi and slli, because the ISA is rv32i, but we can use mul by __builtin.
 
  $DIR/riscv32-unknown-elf-gcc -o addmul2_b ./addmul2.s && $DIR/riscv32-unknown-elf-run  ./addmul2_b
 This verifies that from the ASM output we can still build an executable that works.
- $DIR/riscv32-unknown-elf-gcc -mhipaic-x-arith -c addmul2.cc && $DIR/riscv32-unknown-elf-gcc -o addmul2_c ./addmul2.o && $DIR/riscv32-unknown-elf-run  ./addmul2_c
+ $DIR/riscv32-unknown-elf-gcc -mhipaic-x-arith -O2 -c addmul2.cc && $DIR/riscv32-unknown-elf-gcc -o addmul2_c ./addmul2.o && $DIR/riscv32-unknown-elf-run  ./addmul2_c
 This verifies that from the Object file output we can still build an executable that works.
+
+ $DIR/riscv32-unknown-elf-objdump -d ./addmul2.o
+should disassemble the obj file and output readable ASM. part of the content should resemble addmul2.s
+
+ $DIR/riscv32-unknown-elf-gdb ./addmul2
+GDB should be able to load the ELF
+ (gdb) disassemble _Z1fjj
+ (gdb) disassemble main
+should be able to disassemble the f(x,y) and main() functions, contents resembles addmul2.s and objdump result
+
