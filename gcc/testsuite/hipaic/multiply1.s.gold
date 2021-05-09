@@ -1,0 +1,1428 @@
+	.file	"multiply1.c"
+	.option nopic
+	.attribute arch, "rv32i2p0"
+	.attribute unaligned_access, 0
+	.attribute stack_align, 16
+	.text
+.Ltext0:
+	.cfi_sections	.debug_frame
+	.align	2
+	.globl	foo
+	.type	foo, @function
+foo:
+.LFB0:
+	.file 1 "multiply1.c"
+	.loc 1 1 23
+	.cfi_startproc
+.LVL0:
+	.loc 1 2 3
+	.loc 1 3 3
+	.loc 1 3 20 is_stmt 0
+	lui	a3,%hi(r_idx.0)
+	lw	a5,%lo(r_idx.0)(a3)
+	.loc 1 4 20
+	addi	a2,a5,2
+	.loc 1 3 20
+	addi	a4,a5,1
+.LVL1:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	sw	a2,%lo(r_idx.0)(a3)
+.LVL2:
+	.loc 1 5 3 is_stmt 1
+	hp.grnd	a5
+	.loc 1 6 3
+	hp.grnd	a4
+	.loc 1 7 3
+	hp.lopx	a0,a5
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	hp.mul	a0,a1,a4
+.LVL3:
+	.loc 1 9 1
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	foo, .-foo
+	.globl	__mulsi3
+	.align	2
+	.globl	bar
+	.type	bar, @function
+bar:
+.LFB1:
+	.loc 1 11 23 is_stmt 1
+	.cfi_startproc
+.LVL4:
+	.loc 1 12 3
+	.loc 1 13 3
+.LBB14:
+.LBB15:
+	.loc 1 3 20 is_stmt 0
+	# t3 = r_idx memory location (high part)
+	lui	t3,%hi(r_idx.0)
+	# a5 = old r_idx value
+	lw	a5,%lo(r_idx.0)(t3)
+.LBE15:
+.LBE14:
+	.loc 1 11 23
+	addi	sp,sp,-32
+	.cfi_def_cfa_offset 32
+	mv	a4,a1
+	mv	a3,a0
+.LVL5:
+.LBB18:
+.LBB16:
+	.loc 1 2 3 is_stmt 1
+	.loc 1 3 3
+	.loc 1 3 20 is_stmt 0
+	addi	a1,a5,1
+.LVL6:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	addi	a2,a5,2
+.LVL7:
+	.loc 1 5 3 is_stmt 1
+.LBE16:
+.LBE18:
+	.loc 1 11 23 is_stmt 0
+	sw	ra,28(sp)
+	sw	s0,24(sp)
+	sw	s1,20(sp)
+	sw	s2,16(sp)
+	sw	s3,12(sp)
+	sw	s4,8(sp)
+	.cfi_offset 1, -4
+	.cfi_offset 8, -8
+	.cfi_offset 9, -12
+	.cfi_offset 18, -16
+	.cfi_offset 19, -20
+	.cfi_offset 20, -24
+.LBB19:
+.LBB17:
+	.loc 1 5 3
+	# a5 = old ridx = u_idx  GenNewRand(u_idx)
+	hp.grnd	a5
+	.loc 1 6 3 is_stmt 1
+	# a1 = a5+1 = old ridx+1 = v_idx, a2 = a5+2 = old ridx+2  GenNewRand(v_idx)
+	hp.grnd	a1
+	.loc 1 7 3
+	# a0 = first input = u, LoadOpX(u, u_idx)
+	hp.lopx	a0,a5
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	# a4 = old a1 = second input = v, a1 = old ridx+1 = v_idx. Then new a1 = Multiply(v, old ridx+1)
+	hp.mul	a1,a4,a1
+.LVL8:
+.LBE17:
+.LBE19:
+	.loc 1 14 3 is_stmt 1
+.LBB20:
+.LBB21:
+	.loc 1 2 3
+	.loc 1 3 3
+	.loc 1 3 20 is_stmt 0
+	# a5 = old ridx. Now a0 = old ridx+3 = v_idx (a new call to foo)
+	addi	a0,a5,3
+.LVL9:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	# a7 = old idx+4
+	addi	a7,a5,4
+.LVL10:
+	.loc 1 5 3 is_stmt 1
+	# a2 = old ridx+2 = u_idx (a new call to foo)  GenNewRand(u_idx)
+	hp.grnd	a2
+	.loc 1 6 3
+	# a0 = old ridx+3 = v_idx (a new call to foo)  GenNewRand(v_idx)
+	hp.grnd	a0
+	.loc 1 7 3
+	# a3 = initial a0 = first input = u.  LoadOpX(u, u_idx)
+	hp.lopx	a3,a2
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	# a4 = second input = v, a0 = old ridx+3 = v_idx (a new call to foo). new a0 = Multiply(v, old ridx+3)
+	hp.mul	a0,a4,a0
+.LVL11:
+.LBE21:
+.LBE20:
+	.loc 1 15 3 is_stmt 1
+	.loc 1 15 7 is_stmt 0
+	# a3 = initial a0 = first input = u, t4 = u+1
+	addi	t4,a3,1
+	# a4 = second input = v, a2 = v+1
+	addi	a2,a4,1
+.LVL12:
+.LBB22:
+.LBB23:
+	.loc 1 2 3 is_stmt 1
+	.loc 1 3 3
+	.loc 1 3 20 is_stmt 0
+	# a5 = old ridx, a6 = old ridx+5 = v_idx
+	addi	a6,a5,5
+.LVL13:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	# t1 = old ridx + 6
+	addi	t1,a5,6
+.LVL14:
+	.loc 1 5 3 is_stmt 1
+	# a7 = old ridx+4 = u_idx. GenNewRand(u_idx)
+	hp.grnd	a7
+	.loc 1 6 3
+	# a6 = old ridx+5 = v_idx. GenNewRand(v_idx)
+	hp.grnd	a6
+	.loc 1 7 3
+	# t4 = u+1, a7 = u_idx. LoadOpX(u+1, u_idx)
+	hp.lopx	t4,a7
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	# a2 = v+1, a6 = old ridx+5 = v_idx. s4 = Multiply(v+1, old ridx+5)
+	hp.mul	s4,a2,a6
+.LVL15:
+.LBE23:
+.LBE22:
+	.loc 1 16 3 is_stmt 1
+	.loc 1 16 7 is_stmt 0
+	# old a3 = initial a0 = first input = u. new a3 = u+2
+	addi	a3,a3,2
+.LVL16:
+    # old a4 = second input = v. new a4 = v+2
+	addi	a4,a4,2
+.LVL17:
+.LBB24:
+.LBB25:
+	.loc 1 2 3 is_stmt 1
+	.loc 1 3 3
+	.loc 1 3 20 is_stmt 0
+	# a5 = old ridx, a6 = old ridx + 7 = v_idx
+	addi	a6,a5,7
+.LVL18:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	# a5 = old ridx, a7 = old ridx + 8
+	addi	a7,a5,8
+.LVL19:
+	.loc 1 5 3 is_stmt 1
+	# t1 = old ridx + 6 = u_idx, GenNewRand(u_idx)
+	hp.grnd	t1
+	.loc 1 6 3
+	# a6 = old ridx + 7 = v_idx, GenNewRand(v_idx)
+	hp.grnd	a6
+	.loc 1 7 3
+	# a3 = u+2, t1 = old ridx+6 = u_idx, LoadOpX(u+2, old ridx + 6)
+	hp.lopx	a3,t1
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	# a4 = v+2, a6 = old ridx + 7 = v_idx, s3 = Multiply(v+2, old ridx + 7)
+	hp.mul	s3,a4,a6
+.LVL20:
+.LBE25:
+.LBE24:
+	.loc 1 17 3 is_stmt 1
+.LBB26:
+.LBB27:
+	.loc 1 2 3
+	.loc 1 3 3
+	.loc 1 3 20 is_stmt 0
+	# a5 = old ridx, s2 = old ridx + 9 = v_idx
+	addi	s2,a5,9
+.LVL21:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	# a5 = old ridx, a6 = old ridx + 10
+	addi	a6,a5,10
+.LVL22:
+	.loc 1 5 3 is_stmt 1
+	# a7 = old ridx + 8 = u_idx, GenNewRand(u_idx)
+	hp.grnd	a7
+	.loc 1 6 3
+	# s2 = old ridx + 9 = v_idx, GenNewRand(v_idx)
+	hp.grnd	s2
+	.loc 1 7 3
+	# t4 = u+1, a7 = old ridx + 8 = u_idx, LoadOpX(u+1, u_idx)
+	hp.lopx	t4,a7
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	# a2 = v+1, old s2 = old ridx + 9 = v_idx, new s2 = Multiply(v+1, old ridx+9)
+	hp.mul	s2,a2,s2
+.LVL23:
+.LBE27:
+.LBE26:
+	.loc 1 18 3 is_stmt 1
+.LBB28:
+.LBB29:
+	.loc 1 2 3
+	.loc 1 3 3
+	.loc 1 4 20 is_stmt 0
+	# a5 = old ridx, a7 = old ridx + 12
+	addi	a7,a5,12
+.LVL24:
+	.loc 1 3 20
+	# old a5 = old ridx, new a5 = old ridx + 11 = v_idx
+	addi	a5,a5,11
+.LVL25:
+	.loc 1 4 3 is_stmt 1
+	.loc 1 4 20 is_stmt 0
+	# a7 = old ridx + 12. store a7 to mem location of r_idx
+	sw	a7,%lo(r_idx.0)(t3)
+.LVL26:
+	.loc 1 5 3 is_stmt 1
+	# a6 = old ridx + 10 = u_idx, GenNewRand(u_idx)
+	hp.grnd	a6
+	.loc 1 6 3
+	# new a5 = old ridx + 11 = v_idx, GenNewRand(v_idx)
+	hp.grnd	a5
+	.loc 1 7 3
+	# a3 = u+2, a6 = old ridx+10 = u_idx, LoadOpX(u+2, u_idx)
+	hp.lopx	a3,a6
+	.loc 1 8 3
+	.loc 1 8 10 is_stmt 0
+	# a4 = v+2, a5 = old ridx + 11 = v_idx, s0 = Multiply(v+2, old ridx + 11)
+	hp.mul	s0,a4,a5
+.LVL27:
+.LBE29:
+.LBE28:
+	.loc 1 19 3 is_stmt 1
+	.loc 1 19 11 is_stmt 0
+	# old a0 = Multiply(v, old ridx+3), a1 = Multiply(v, old ridx+1), rv32i has no mul, so call library __mulsi3. a0 = foo(u,v)*foo(u,v)
+	call	__mulsi3
+.LVL28:
+	.loc 1 19 15
+	# a1 = s4 = Multiply(v+1, old ridx+5) = foo(u+1, v+1) first time
+	mv	a1,s4
+	.loc 1 19 11
+	# s1 = a0 = foo(u,v)*foo(u,v)
+	mv	s1,a0
+	.loc 1 19 15
+	# new a0 = s3 = Multiply(v+2, old ridx + 7) = foo(u+2, v+2) first time
+	mv	a0,s3
+	# library to compute new a0 = old a0 * old a1 = foo(u+2, v+2) first time * foo(u+1, v+1) first time
+	call	__mulsi3
+.LVL29:
+    # a5 = a0 = foo(u+2, v+2) first time * foo(u+1, v+1) first time
+	mv	a5,a0
+	.loc 1 19 19
+	# a1 = s2 = Multiply(v+1, old ridx+9) = foo(u+1, v+1) second time
+	mv	a1,s2
+	# a0 = s0 = Multiply(v+2, old ridx + 11) = foo(u+2, v+2) second time
+	mv	a0,s0
+	.loc 1 19 13
+	# old s1 = foo(u,v)*foo(u,v), a5 = foo(u+2, v+2) first time * foo(u+1, v+1) first time, new s1 = foo(u,v)*foo(u,v) + foo(u+2, v+2) first time * foo(u+1, v+1) first time
+	add	s1,s1,a5
+	.loc 1 19 19
+	# new a0 = old a0 * old a1 = foo(u+2, v+2) second time * foo(u+1, v+1) second time
+	call	__mulsi3
+.LVL30:
+	.loc 1 20 1
+	lw	ra,28(sp)
+	.cfi_restore 1
+	lw	s0,24(sp)
+	.cfi_restore 8
+.LVL31:
+	lw	s2,16(sp)
+	.cfi_restore 18
+.LVL32:
+	lw	s3,12(sp)
+	.cfi_restore 19
+.LVL33:
+	lw	s4,8(sp)
+	.cfi_restore 20
+.LVL34:
+    # new a0 = s1 + old a0 = foo(u,v)*foo(u,v) + foo(u+2, v+2) first time * foo(u+1, v+1) first time + foo(u+2, v+2) second time * foo(u+1, v+1) second time
+	add	a0,s1,a0
+	lw	s1,20(sp)
+	.cfi_restore 9
+	addi	sp,sp,32
+	.cfi_def_cfa_offset 0
+	jr	ra
+	.cfi_endproc
+.LFE1:
+	.size	bar, .-bar
+	.section	.sbss,"aw",@nobits
+	.align	2
+	.type	r_idx.0, @object
+	.size	r_idx.0, 4
+r_idx.0:
+	.zero	4
+	.text
+.Letext0:
+	.section	.debug_info,"",@progbits
+.Ldebug_info0:
+	.4byte	0x2b6
+	.2byte	0x4
+	.4byte	.Ldebug_abbrev0
+	.byte	0x4
+	.byte	0x1
+	.4byte	.LASF3
+	.byte	0xc
+	.4byte	.LASF4
+	.4byte	.LASF5
+	.4byte	.Ltext0
+	.4byte	.Letext0-.Ltext0
+	.4byte	.Ldebug_line0
+	.byte	0x2
+	.string	"bar"
+	.byte	0x1
+	.byte	0xb
+	.byte	0x5
+	.4byte	0x227
+	.4byte	.LFB1
+	.4byte	.LFE1-.LFB1
+	.byte	0x1
+	.byte	0x9c
+	.4byte	0x227
+	.byte	0x3
+	.string	"u"
+	.byte	0x1
+	.byte	0xb
+	.byte	0xd
+	.4byte	0x227
+	.4byte	.LLST1
+	.byte	0x3
+	.string	"v"
+	.byte	0x1
+	.byte	0xb
+	.byte	0x14
+	.4byte	0x227
+	.4byte	.LLST2
+	.byte	0x4
+	.string	"a"
+	.byte	0x1
+	.byte	0xc
+	.byte	0x7
+	.4byte	0x227
+	.4byte	.LLST3
+	.byte	0x4
+	.string	"b"
+	.byte	0x1
+	.byte	0xc
+	.byte	0xa
+	.4byte	0x227
+	.4byte	.LLST4
+	.byte	0x4
+	.string	"c"
+	.byte	0x1
+	.byte	0xc
+	.byte	0xd
+	.4byte	0x227
+	.4byte	.LLST5
+	.byte	0x4
+	.string	"d"
+	.byte	0x1
+	.byte	0xc
+	.byte	0x10
+	.4byte	0x227
+	.4byte	.LLST6
+	.byte	0x4
+	.string	"e"
+	.byte	0x1
+	.byte	0xc
+	.byte	0x13
+	.4byte	0x227
+	.4byte	.LLST7
+	.byte	0x4
+	.string	"f"
+	.byte	0x1
+	.byte	0xc
+	.byte	0x16
+	.4byte	0x227
+	.4byte	.LLST8
+	.byte	0x5
+	.4byte	0x22e
+	.4byte	.LBB14
+	.4byte	.Ldebug_ranges0+0
+	.byte	0x1
+	.byte	0xd
+	.byte	0x7
+	.4byte	0xee
+	.byte	0x6
+	.4byte	0x249
+	.4byte	.LLST9
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST10
+	.byte	0x7
+	.4byte	.Ldebug_ranges0+0
+	.byte	0x8
+	.4byte	0x265
+	.4byte	.LLST11
+	.byte	0x8
+	.4byte	0x271
+	.4byte	.LLST12
+	.byte	0
+	.byte	0
+	.byte	0x9
+	.4byte	0x22e
+	.4byte	.LBB20
+	.4byte	.LBE20-.LBB20
+	.byte	0x1
+	.byte	0xe
+	.byte	0x7
+	.4byte	0x127
+	.byte	0x6
+	.4byte	0x249
+	.4byte	.LLST13
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST14
+	.byte	0x8
+	.4byte	0x265
+	.4byte	.LLST15
+	.byte	0x8
+	.4byte	0x271
+	.4byte	.LLST16
+	.byte	0
+	.byte	0x9
+	.4byte	0x22e
+	.4byte	.LBB22
+	.4byte	.LBE22-.LBB22
+	.byte	0x1
+	.byte	0xf
+	.byte	0x7
+	.4byte	0x160
+	.byte	0x6
+	.4byte	0x249
+	.4byte	.LLST17
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST18
+	.byte	0x8
+	.4byte	0x265
+	.4byte	.LLST19
+	.byte	0x8
+	.4byte	0x271
+	.4byte	.LLST20
+	.byte	0
+	.byte	0x9
+	.4byte	0x22e
+	.4byte	.LBB24
+	.4byte	.LBE24-.LBB24
+	.byte	0x1
+	.byte	0x10
+	.byte	0x7
+	.4byte	0x199
+	.byte	0x6
+	.4byte	0x249
+	.4byte	.LLST21
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST22
+	.byte	0x8
+	.4byte	0x265
+	.4byte	.LLST23
+	.byte	0x8
+	.4byte	0x271
+	.4byte	.LLST24
+	.byte	0
+	.byte	0x9
+	.4byte	0x22e
+	.4byte	.LBB26
+	.4byte	.LBE26-.LBB26
+	.byte	0x1
+	.byte	0x11
+	.byte	0x7
+	.4byte	0x1d2
+	.byte	0x6
+	.4byte	0x249
+	.4byte	.LLST25
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST26
+	.byte	0x8
+	.4byte	0x265
+	.4byte	.LLST27
+	.byte	0x8
+	.4byte	0x271
+	.4byte	.LLST28
+	.byte	0
+	.byte	0x9
+	.4byte	0x22e
+	.4byte	.LBB28
+	.4byte	.LBE28-.LBB28
+	.byte	0x1
+	.byte	0x12
+	.byte	0x7
+	.4byte	0x20b
+	.byte	0x6
+	.4byte	0x249
+	.4byte	.LLST29
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST30
+	.byte	0x8
+	.4byte	0x265
+	.4byte	.LLST31
+	.byte	0x8
+	.4byte	0x271
+	.4byte	.LLST32
+	.byte	0
+	.byte	0xa
+	.4byte	.LVL28
+	.4byte	0x2b0
+	.byte	0xa
+	.4byte	.LVL29
+	.4byte	0x2b0
+	.byte	0xa
+	.4byte	.LVL30
+	.4byte	0x2b0
+	.byte	0
+	.byte	0xb
+	.byte	0x4
+	.byte	0x5
+	.string	"int"
+	.byte	0xc
+	.string	"foo"
+	.byte	0x1
+	.byte	0x1
+	.byte	0x5
+	.4byte	0x227
+	.byte	0x1
+	.4byte	0x27e
+	.byte	0xd
+	.string	"u"
+	.byte	0x1
+	.byte	0x1
+	.byte	0xd
+	.4byte	0x227
+	.byte	0xd
+	.string	"v"
+	.byte	0x1
+	.byte	0x1
+	.byte	0x14
+	.4byte	0x227
+	.byte	0xe
+	.4byte	.LASF0
+	.byte	0x1
+	.byte	0x2
+	.byte	0xe
+	.4byte	0x227
+	.byte	0x5
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0xf
+	.4byte	.LASF1
+	.byte	0x1
+	.byte	0x3
+	.byte	0x7
+	.4byte	0x227
+	.byte	0xf
+	.4byte	.LASF2
+	.byte	0x1
+	.byte	0x4
+	.byte	0x7
+	.4byte	0x227
+	.byte	0
+	.byte	0x10
+	.4byte	0x22e
+	.4byte	.LFB0
+	.4byte	.LFE0-.LFB0
+	.byte	0x1
+	.byte	0x9c
+	.4byte	0x2b0
+	.byte	0x6
+	.4byte	0x23f
+	.4byte	.LLST0
+	.byte	0x11
+	.4byte	0x249
+	.byte	0x1
+	.byte	0x5b
+	.byte	0x12
+	.4byte	0x265
+	.byte	0x1
+	.byte	0x5f
+	.byte	0x12
+	.4byte	0x271
+	.byte	0x1
+	.byte	0x5e
+	.byte	0
+	.byte	0x13
+	.4byte	.LASF6
+	.4byte	.LASF6
+	.byte	0
+	.section	.debug_abbrev,"",@progbits
+.Ldebug_abbrev0:
+	.byte	0x1
+	.byte	0x11
+	.byte	0x1
+	.byte	0x25
+	.byte	0xe
+	.byte	0x13
+	.byte	0xb
+	.byte	0x3
+	.byte	0xe
+	.byte	0x1b
+	.byte	0xe
+	.byte	0x11
+	.byte	0x1
+	.byte	0x12
+	.byte	0x6
+	.byte	0x10
+	.byte	0x17
+	.byte	0
+	.byte	0
+	.byte	0x2
+	.byte	0x2e
+	.byte	0x1
+	.byte	0x3f
+	.byte	0x19
+	.byte	0x3
+	.byte	0x8
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x27
+	.byte	0x19
+	.byte	0x49
+	.byte	0x13
+	.byte	0x11
+	.byte	0x1
+	.byte	0x12
+	.byte	0x6
+	.byte	0x40
+	.byte	0x18
+	.byte	0x97,0x42
+	.byte	0x19
+	.byte	0x1
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0x3
+	.byte	0x5
+	.byte	0
+	.byte	0x3
+	.byte	0x8
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x49
+	.byte	0x13
+	.byte	0x2
+	.byte	0x17
+	.byte	0
+	.byte	0
+	.byte	0x4
+	.byte	0x34
+	.byte	0
+	.byte	0x3
+	.byte	0x8
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x49
+	.byte	0x13
+	.byte	0x2
+	.byte	0x17
+	.byte	0
+	.byte	0
+	.byte	0x5
+	.byte	0x1d
+	.byte	0x1
+	.byte	0x31
+	.byte	0x13
+	.byte	0x52
+	.byte	0x1
+	.byte	0x55
+	.byte	0x17
+	.byte	0x58
+	.byte	0xb
+	.byte	0x59
+	.byte	0xb
+	.byte	0x57
+	.byte	0xb
+	.byte	0x1
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0x6
+	.byte	0x5
+	.byte	0
+	.byte	0x31
+	.byte	0x13
+	.byte	0x2
+	.byte	0x17
+	.byte	0
+	.byte	0
+	.byte	0x7
+	.byte	0xb
+	.byte	0x1
+	.byte	0x55
+	.byte	0x17
+	.byte	0
+	.byte	0
+	.byte	0x8
+	.byte	0x34
+	.byte	0
+	.byte	0x31
+	.byte	0x13
+	.byte	0x2
+	.byte	0x17
+	.byte	0
+	.byte	0
+	.byte	0x9
+	.byte	0x1d
+	.byte	0x1
+	.byte	0x31
+	.byte	0x13
+	.byte	0x11
+	.byte	0x1
+	.byte	0x12
+	.byte	0x6
+	.byte	0x58
+	.byte	0xb
+	.byte	0x59
+	.byte	0xb
+	.byte	0x57
+	.byte	0xb
+	.byte	0x1
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0xa
+	.byte	0x89,0x82,0x1
+	.byte	0
+	.byte	0x11
+	.byte	0x1
+	.byte	0x31
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0xb
+	.byte	0x24
+	.byte	0
+	.byte	0xb
+	.byte	0xb
+	.byte	0x3e
+	.byte	0xb
+	.byte	0x3
+	.byte	0x8
+	.byte	0
+	.byte	0
+	.byte	0xc
+	.byte	0x2e
+	.byte	0x1
+	.byte	0x3f
+	.byte	0x19
+	.byte	0x3
+	.byte	0x8
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x27
+	.byte	0x19
+	.byte	0x49
+	.byte	0x13
+	.byte	0x20
+	.byte	0xb
+	.byte	0x1
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0xd
+	.byte	0x5
+	.byte	0
+	.byte	0x3
+	.byte	0x8
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x49
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0xe
+	.byte	0x34
+	.byte	0
+	.byte	0x3
+	.byte	0xe
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x49
+	.byte	0x13
+	.byte	0x2
+	.byte	0x18
+	.byte	0
+	.byte	0
+	.byte	0xf
+	.byte	0x34
+	.byte	0
+	.byte	0x3
+	.byte	0xe
+	.byte	0x3a
+	.byte	0xb
+	.byte	0x3b
+	.byte	0xb
+	.byte	0x39
+	.byte	0xb
+	.byte	0x49
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0x10
+	.byte	0x2e
+	.byte	0x1
+	.byte	0x31
+	.byte	0x13
+	.byte	0x11
+	.byte	0x1
+	.byte	0x12
+	.byte	0x6
+	.byte	0x40
+	.byte	0x18
+	.byte	0x97,0x42
+	.byte	0x19
+	.byte	0x1
+	.byte	0x13
+	.byte	0
+	.byte	0
+	.byte	0x11
+	.byte	0x5
+	.byte	0
+	.byte	0x31
+	.byte	0x13
+	.byte	0x2
+	.byte	0x18
+	.byte	0
+	.byte	0
+	.byte	0x12
+	.byte	0x34
+	.byte	0
+	.byte	0x31
+	.byte	0x13
+	.byte	0x2
+	.byte	0x18
+	.byte	0
+	.byte	0
+	.byte	0x13
+	.byte	0x2e
+	.byte	0
+	.byte	0x3f
+	.byte	0x19
+	.byte	0x3c
+	.byte	0x19
+	.byte	0x6e
+	.byte	0xe
+	.byte	0x3
+	.byte	0xe
+	.byte	0
+	.byte	0
+	.byte	0
+	.section	.debug_loc,"",@progbits
+.Ldebug_loc0:
+.LLST1:
+	.4byte	.LVL4-.Ltext0
+	.4byte	.LVL9-.Ltext0
+	.2byte	0x1
+	.byte	0x5a
+	.4byte	.LVL9-.Ltext0
+	.4byte	.LVL16-.Ltext0
+	.2byte	0x1
+	.byte	0x5d
+	.4byte	.LVL16-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7d
+	.byte	0x7e
+	.byte	0x9f
+	.4byte	.LVL28-1-.Ltext0
+	.4byte	.LFE1-.Ltext0
+	.2byte	0x4
+	.byte	0xf3
+	.byte	0x1
+	.byte	0x5a
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST2:
+	.4byte	.LVL4-.Ltext0
+	.4byte	.LVL6-.Ltext0
+	.2byte	0x1
+	.byte	0x5b
+	.4byte	.LVL6-.Ltext0
+	.4byte	.LVL17-.Ltext0
+	.2byte	0x1
+	.byte	0x5e
+	.4byte	.LVL17-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7e
+	.byte	0x7e
+	.byte	0x9f
+	.4byte	.LVL28-1-.Ltext0
+	.4byte	.LFE1-.Ltext0
+	.2byte	0x4
+	.byte	0xf3
+	.byte	0x1
+	.byte	0x5b
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST3:
+	.4byte	.LVL8-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x1
+	.byte	0x5b
+	.4byte	0
+	.4byte	0
+.LLST4:
+	.4byte	.LVL11-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x1
+	.byte	0x5a
+	.4byte	0
+	.4byte	0
+.LLST5:
+	.4byte	.LVL15-.Ltext0
+	.4byte	.LVL34-.Ltext0
+	.2byte	0x1
+	.byte	0x64
+	.4byte	0
+	.4byte	0
+.LLST6:
+	.4byte	.LVL20-.Ltext0
+	.4byte	.LVL33-.Ltext0
+	.2byte	0x1
+	.byte	0x63
+	.4byte	0
+	.4byte	0
+.LLST7:
+	.4byte	.LVL23-.Ltext0
+	.4byte	.LVL32-.Ltext0
+	.2byte	0x1
+	.byte	0x62
+	.4byte	0
+	.4byte	0
+.LLST8:
+	.4byte	.LVL27-.Ltext0
+	.4byte	.LVL31-.Ltext0
+	.2byte	0x1
+	.byte	0x58
+	.4byte	0
+	.4byte	0
+.LLST9:
+	.4byte	.LVL5-.Ltext0
+	.4byte	.LVL6-.Ltext0
+	.2byte	0x1
+	.byte	0x5b
+	.4byte	.LVL6-.Ltext0
+	.4byte	.LVL8-.Ltext0
+	.2byte	0x1
+	.byte	0x5e
+	.4byte	0
+	.4byte	0
+.LLST10:
+	.4byte	.LVL5-.Ltext0
+	.4byte	.LVL8-.Ltext0
+	.2byte	0x1
+	.byte	0x5a
+	.4byte	0
+	.4byte	0
+.LLST11:
+	.4byte	.LVL6-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x1
+	.byte	0x5f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x5
+	.byte	0x3
+	.4byte	r_idx.0
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x75
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST12:
+	.4byte	.LVL7-.Ltext0
+	.4byte	.LVL8-.Ltext0
+	.2byte	0x1
+	.byte	0x5b
+	.4byte	.LVL8-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x1
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x1
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x76
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST13:
+	.4byte	.LVL8-.Ltext0
+	.4byte	.LVL11-.Ltext0
+	.2byte	0x1
+	.byte	0x5e
+	.4byte	0
+	.4byte	0
+.LLST14:
+	.4byte	.LVL8-.Ltext0
+	.4byte	.LVL9-.Ltext0
+	.2byte	0x1
+	.byte	0x5a
+	.4byte	.LVL9-.Ltext0
+	.4byte	.LVL11-.Ltext0
+	.2byte	0x1
+	.byte	0x5d
+	.4byte	0
+	.4byte	0
+.LLST15:
+	.4byte	.LVL9-.Ltext0
+	.4byte	.LVL12-.Ltext0
+	.2byte	0x1
+	.byte	0x5c
+	.4byte	.LVL12-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x2
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x2
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x77
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST16:
+	.4byte	.LVL10-.Ltext0
+	.4byte	.LVL11-.Ltext0
+	.2byte	0x1
+	.byte	0x5a
+	.4byte	.LVL11-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x3
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x3
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x78
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST17:
+	.4byte	.LVL12-.Ltext0
+	.4byte	.LVL15-.Ltext0
+	.2byte	0x1
+	.byte	0x5c
+	.4byte	0
+	.4byte	0
+.LLST18:
+	.4byte	.LVL12-.Ltext0
+	.4byte	.LVL15-.Ltext0
+	.2byte	0x1
+	.byte	0x6d
+	.4byte	0
+	.4byte	0
+.LLST19:
+	.4byte	.LVL13-.Ltext0
+	.4byte	.LVL19-.Ltext0
+	.2byte	0x1
+	.byte	0x61
+	.4byte	.LVL19-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x4
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x4
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x79
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST20:
+	.4byte	.LVL14-.Ltext0
+	.4byte	.LVL18-.Ltext0
+	.2byte	0x1
+	.byte	0x60
+	.4byte	.LVL18-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x5
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x5
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x7a
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST21:
+	.4byte	.LVL17-.Ltext0
+	.4byte	.LVL20-.Ltext0
+	.2byte	0x1
+	.byte	0x5e
+	.4byte	0
+	.4byte	0
+.LLST22:
+	.4byte	.LVL17-.Ltext0
+	.4byte	.LVL20-.Ltext0
+	.2byte	0x1
+	.byte	0x5d
+	.4byte	0
+	.4byte	0
+.LLST23:
+	.4byte	.LVL18-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x1
+	.byte	0x56
+	.4byte	0
+	.4byte	0
+.LLST24:
+	.4byte	.LVL19-.Ltext0
+	.4byte	.LVL22-.Ltext0
+	.2byte	0x1
+	.byte	0x60
+	.4byte	.LVL22-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x7
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x7
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x7c
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST25:
+	.4byte	.LVL20-.Ltext0
+	.4byte	.LVL23-.Ltext0
+	.2byte	0x1
+	.byte	0x5c
+	.4byte	0
+	.4byte	0
+.LLST26:
+	.4byte	.LVL20-.Ltext0
+	.4byte	.LVL23-.Ltext0
+	.2byte	0x1
+	.byte	0x6d
+	.4byte	0
+	.4byte	0
+.LLST27:
+	.4byte	.LVL21-.Ltext0
+	.4byte	.LVL24-.Ltext0
+	.2byte	0x1
+	.byte	0x61
+	.4byte	.LVL24-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x8
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x8
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x7d
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST28:
+	.4byte	.LVL22-.Ltext0
+	.4byte	.LVL23-.Ltext0
+	.2byte	0x1
+	.byte	0x62
+	.4byte	.LVL23-.Ltext0
+	.4byte	.LVL25-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x9
+	.byte	0x9f
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL26-.Ltext0
+	.2byte	0x9
+	.byte	0x3
+	.4byte	r_idx.0
+	.byte	0x6
+	.byte	0x23
+	.byte	0x9
+	.byte	0x9f
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x3
+	.byte	0x7f
+	.byte	0x7e
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+.LLST29:
+	.4byte	.LVL23-.Ltext0
+	.4byte	.LVL27-.Ltext0
+	.2byte	0x1
+	.byte	0x5e
+	.4byte	0
+	.4byte	0
+.LLST30:
+	.4byte	.LVL23-.Ltext0
+	.4byte	.LVL27-.Ltext0
+	.2byte	0x1
+	.byte	0x5d
+	.4byte	0
+	.4byte	0
+.LLST31:
+	.4byte	.LVL25-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x1
+	.byte	0x60
+	.4byte	0
+	.4byte	0
+.LLST32:
+	.4byte	.LVL26-.Ltext0
+	.4byte	.LVL28-1-.Ltext0
+	.2byte	0x1
+	.byte	0x5f
+	.4byte	0
+	.4byte	0
+.LLST0:
+	.4byte	.LVL0-.Ltext0
+	.4byte	.LVL3-.Ltext0
+	.2byte	0x1
+	.byte	0x5a
+	.4byte	.LVL3-.Ltext0
+	.4byte	.LFE0-.Ltext0
+	.2byte	0x4
+	.byte	0xf3
+	.byte	0x1
+	.byte	0x5a
+	.byte	0x9f
+	.4byte	0
+	.4byte	0
+	.section	.debug_aranges,"",@progbits
+	.4byte	0x1c
+	.2byte	0x2
+	.4byte	.Ldebug_info0
+	.byte	0x4
+	.byte	0
+	.2byte	0
+	.2byte	0
+	.4byte	.Ltext0
+	.4byte	.Letext0-.Ltext0
+	.4byte	0
+	.4byte	0
+	.section	.debug_ranges,"",@progbits
+.Ldebug_ranges0:
+	.4byte	.LBB14-.Ltext0
+	.4byte	.LBE14-.Ltext0
+	.4byte	.LBB18-.Ltext0
+	.4byte	.LBE18-.Ltext0
+	.4byte	.LBB19-.Ltext0
+	.4byte	.LBE19-.Ltext0
+	.4byte	0
+	.4byte	0
+	.section	.debug_line,"",@progbits
+.Ldebug_line0:
+	.section	.debug_str,"MS",@progbits,1
+.LASF0:
+	.string	"r_idx"
+.LASF5:
+	.string	"/home/tim/riscv-gnu-toolchain/riscv-gcc/gcc/testsuite/hipaic"
+.LASF3:
+	.string	"GNU C17 10.2.0 -mhipaic-x-arith -mtune=rocket -march=rv32i -mabi=ilp32 -march=rv32i -g -O2"
+.LASF4:
+	.string	"multiply1.c"
+.LASF1:
+	.string	"u_idx"
+.LASF2:
+	.string	"v_idx"
+.LASF6:
+	.string	"__mulsi3"
+	.ident	"GCC: (GNU) 10.2.0"
