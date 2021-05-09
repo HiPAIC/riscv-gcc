@@ -65,6 +65,11 @@
   UNSPECV_BLOCKAGE
   UNSPECV_FENCE
   UNSPECV_FENCE_I
+
+  ;; HiPAIC extended
+  UNSPECV_HIPAIC_GENNEWRAND
+  UNSPECV_HIPAIC_LOADOPX
+  UNSPECV_HIPAIC_MULTIPLY
 ])
 
 (define_constants
@@ -589,6 +594,28 @@
   { return TARGET_64BIT ? "mulw\t%0,%1,%2" : "mul\t%0,%1,%2"; }
   [(set_attr "type" "imul")
    (set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_gennewrand"
+  [(unspec_volatile [(match_operand:SI 0 "register_operand" "r")]
+    UNSPECV_HIPAIC_GENNEWRAND)]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  "hp.grnd\t%0"
+  [(set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_loadopx"
+  [(unspec_volatile [(match_operand:SI 0 "register_operand" "r") (match_operand:SI 1 "register_operand" "r")]
+    UNSPECV_HIPAIC_LOADOPX)]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  "hp.lopx\t%0,%1"
+  [(set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_multiply"
+  [(set (match_operand:SI 0 "register_operand" "=r")
+    (unspec_volatile [(match_operand:SI 1 "register_operand" "r") (match_operand:SI 2 "register_operand" "r")]
+     UNSPECV_HIPAIC_MULTIPLY))]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  "hp.mul\t%0,%1,%2"
+  [(set_attr "mode" "SI")])
 
 ;;
 ;;  ....................
