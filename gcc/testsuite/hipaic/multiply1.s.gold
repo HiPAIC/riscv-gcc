@@ -30,9 +30,9 @@ foo:
 	sw	a2,%lo(r_idx.0)(a3)
 .LVL2:
 	.loc 1 5 3 is_stmt 1
-	hp.grnd	a5
+	hp.genrnd	a5
 	.loc 1 6 3
-	hp.grnd	a4
+	hp.genrnd	a4
 	.loc 1 7 3
 	hp.lopx	a0,a5
 	.loc 1 8 3
@@ -101,10 +101,10 @@ bar:
 .LBB17:
 	.loc 1 5 3
 	# a5 = old ridx = u_idx  GenNewRand(u_idx)
-	hp.grnd	a5
+	hp.genrnd	a5
 	.loc 1 6 3 is_stmt 1
 	# a1 = a5+1 = old ridx+1 = v_idx, a2 = a5+2 = old ridx+2  GenNewRand(v_idx)
-	hp.grnd	a1
+	hp.genrnd	a1
 	.loc 1 7 3
 	# a0 = first input = u, LoadOpX(u, u_idx)
 	hp.lopx	a0,a5
@@ -131,10 +131,10 @@ bar:
 .LVL10:
 	.loc 1 5 3 is_stmt 1
 	# a2 = old ridx+2 = u_idx (a new call to foo)  GenNewRand(u_idx)
-	hp.grnd	a2
+	hp.genrnd	a2
 	.loc 1 6 3
 	# a0 = old ridx+3 = v_idx (a new call to foo)  GenNewRand(v_idx)
-	hp.grnd	a0
+	hp.genrnd	a0
 	.loc 1 7 3
 	# a3 = initial a0 = first input = u.  LoadOpX(u, u_idx)
 	hp.lopx	a3,a2
@@ -167,10 +167,10 @@ bar:
 .LVL14:
 	.loc 1 5 3 is_stmt 1
 	# a7 = old ridx+4 = u_idx. GenNewRand(u_idx)
-	hp.grnd	a7
+	hp.genrnd	a7
 	.loc 1 6 3
 	# a6 = old ridx+5 = v_idx. GenNewRand(v_idx)
-	hp.grnd	a6
+	hp.genrnd	a6
 	.loc 1 7 3
 	# t4 = u+1, a7 = u_idx. LoadOpX(u+1, u_idx)
 	hp.lopx	t4,a7
@@ -204,10 +204,10 @@ bar:
 .LVL19:
 	.loc 1 5 3 is_stmt 1
 	# t1 = old ridx + 6 = u_idx, GenNewRand(u_idx)
-	hp.grnd	t1
+	hp.genrnd	t1
 	.loc 1 6 3
 	# a6 = old ridx + 7 = v_idx, GenNewRand(v_idx)
-	hp.grnd	a6
+	hp.genrnd	a6
 	.loc 1 7 3
 	# a3 = u+2, t1 = old ridx+6 = u_idx, LoadOpX(u+2, old ridx + 6)
 	hp.lopx	a3,t1
@@ -234,10 +234,10 @@ bar:
 .LVL22:
 	.loc 1 5 3 is_stmt 1
 	# a7 = old ridx + 8 = u_idx, GenNewRand(u_idx)
-	hp.grnd	a7
+	hp.genrnd	a7
 	.loc 1 6 3
 	# s2 = old ridx + 9 = v_idx, GenNewRand(v_idx)
-	hp.grnd	s2
+	hp.genrnd	s2
 	.loc 1 7 3
 	# t4 = u+1, a7 = old ridx + 8 = u_idx, LoadOpX(u+1, u_idx)
 	hp.lopx	t4,a7
@@ -268,10 +268,10 @@ bar:
 .LVL26:
 	.loc 1 5 3 is_stmt 1
 	# a6 = old ridx + 10 = u_idx, GenNewRand(u_idx)
-	hp.grnd	a6
+	hp.genrnd	a6
 	.loc 1 6 3
 	# new a5 = old ridx + 11 = v_idx, GenNewRand(v_idx)
-	hp.grnd	a5
+	hp.genrnd	a5
 	.loc 1 7 3
 	# a3 = u+2, a6 = old ridx+10 = u_idx, LoadOpX(u+2, u_idx)
 	hp.lopx	a3,a6

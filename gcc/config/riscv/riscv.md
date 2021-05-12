@@ -70,6 +70,7 @@
   UNSPECV_HIPAIC_GENNEWRAND
   UNSPECV_HIPAIC_LOADOPX
   UNSPECV_HIPAIC_MULTIPLY
+  UNSPECV_HIPAIC_GETNEXTRAND
 ])
 
 (define_constants
@@ -599,7 +600,7 @@
   [(unspec_volatile [(match_operand:SI 0 "register_operand" "r")]
     UNSPECV_HIPAIC_GENNEWRAND)]
   "TARGET_HIPAIC_EXTENDED_ARITH"
-  "hp.grnd\t%0"
+  "hp.genrnd\t%0"
   [(set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_loadopx"
@@ -615,6 +616,14 @@
      UNSPECV_HIPAIC_MULTIPLY))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.mul\t%0,%1,%2"
+  [(set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_getnextrand"
+  [(set (match_operand:SI 0 "register_operand" "=r")
+    (unspec_volatile [(const_int 1)]
+     UNSPECV_HIPAIC_GETNEXTRAND))]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  "hp.nxtrnd\t%0"
   [(set_attr "mode" "SI")])
 
 ;;
