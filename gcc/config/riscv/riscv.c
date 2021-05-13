@@ -4577,6 +4577,20 @@ riscv_issue_rate (void)
   return tune_param->issue_rate;
 }
 
+// insn is consumer, dep_insn is producer. See dep_cost_1() in haifa-sched.c.
+// cost is roughly the latency in cycle between dep_insn and insn. See dep_cost_1() and insn_default_latency()
+// dep_type: REG_DEP_TRUE, REG_DEP_ANTI, REG_DEP_OUTPUT see reg-notes.def
+static int riscv_adjust_cost(rtx_insn *insn, int dep_type, rtx_insn *dep_insn, int cost, unsigned int dw) {
+  int newcost = cost;
+  // insn codes are at build-gcc-newlib-stage1/gcc/insn-codes.h
+  if (INSN_CODE(dep_insn) == CODE_FOR_riscv_hipaic_multiply && dep_type != REG_DEP_ANTI) {
+    newcost += 2;
+  }
+  fprintf(stderr, "xzl riscv_adjust_cost insn %d dep_type %d dep_insn %d cost %d newcost%c %d dw %d\n",
+    INSN_CODE(insn), dep_type, INSN_CODE(dep_insn), cost, (newcost == cost ? ' ' : '!'), newcost, dw);
+  return newcost;
+}
+
 /* Auxiliary function to emit RISC-V ELF attribute. */
 static void
 riscv_emit_attribute ()
@@ -5283,6 +5297,9 @@ riscv_new_address_profitable_p (rtx memref, rtx_insn *insn, rtx new_addr)
 
 #undef TARGET_SCHED_ISSUE_RATE
 #define TARGET_SCHED_ISSUE_RATE riscv_issue_rate
+
+#undef  TARGET_SCHED_ADJUST_COST
+#define TARGET_SCHED_ADJUST_COST riscv_adjust_cost
 
 #undef TARGET_FUNCTION_OK_FOR_SIBCALL
 #define TARGET_FUNCTION_OK_FOR_SIBCALL riscv_function_ok_for_sibcall
