@@ -274,6 +274,19 @@ const enum reg_class riscv_regno_to_class[FIRST_PSEUDO_REGISTER] = {
   FRAME_REGS,	FRAME_REGS,
 };
 
+/* Costs to use when optimizing for hipaic.  */
+static const struct riscv_tune_param hipaic_tune_info = {
+  {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_add */
+  {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_mul */
+  {COSTS_N_INSNS (20), COSTS_N_INSNS (20)},	/* fp_div */
+  {COSTS_N_INSNS (4), COSTS_N_INSNS (4)},	/* int_mul */
+  {COSTS_N_INSNS (6), COSTS_N_INSNS (6)},	/* int_div */
+  1,						/* issue_rate */
+  3,						/* branch_cost */
+  5,						/* memory_cost */
+  true,						/* slow_unaligned_access */
+};
+
 /* Costs to use when optimizing for rocket.  */
 static const struct riscv_tune_param rocket_tune_info = {
   {COSTS_N_INSNS (4), COSTS_N_INSNS (5)},	/* fp_add */
@@ -349,6 +362,7 @@ static const struct riscv_tune_info riscv_tune_info_table[] = {
   { "sifive-5-series", generic, &rocket_tune_info },
   { "sifive-7-series", sifive_7, &sifive_7_tune_info },
   { "size", generic, &optimize_size_tune_info },
+  { "hipaic-0", hipaic_0, &hipaic_tune_info },
 };
 
 /* Return the riscv_tune_info entry for the given name string.  */

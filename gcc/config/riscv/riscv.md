@@ -171,7 +171,8 @@
 (define_attr "type"
   "unknown,branch,jump,call,load,fpload,store,fpstore,
    mtc,mfc,const,arith,logical,shift,slt,imul,idiv,move,fmove,fadd,fmul,
-   fmadd,fdiv,fcmp,fcvt,fsqrt,multi,auipc,sfb_alu,nop,ghost"
+   fmadd,fdiv,fcmp,fcvt,fsqrt,multi,auipc,sfb_alu,nop,ghost,
+   secret_newrand, secret_opx, secret_mul"
   (cond [(eq_attr "got" "load") (const_string "load")
 
 	 ;; If a doubleword move uses these expensive instructions,
@@ -253,7 +254,7 @@
 ;; Microarchitectures we know how to tune for.
 ;; Keep this in sync with enum riscv_microarchitecture.
 (define_attr "tune"
-  "generic,sifive_7"
+  "generic,sifive_7,hipaic_0"
   (const (symbol_ref "((enum attr_tune) riscv_microarchitecture)")))
 
 ;; Describe a user's asm statement.
@@ -601,14 +602,16 @@
     UNSPECV_HIPAIC_GENNEWRAND)]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.genrnd\t%0"
-  [(set_attr "mode" "SI")])
+  [(set_attr "type" "secret_newrand")
+   (set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_loadopx"
   [(unspec_volatile [(match_operand:SI 0 "register_operand" "r") (match_operand:SI 1 "register_operand" "r")]
     UNSPECV_HIPAIC_LOADOPX)]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.lopx\t%0,%1"
-  [(set_attr "mode" "SI")])
+  [(set_attr "type" "secret_opx")
+   (set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_multiply"
   [(set (match_operand:SI 0 "register_operand" "=r")
@@ -616,7 +619,8 @@
      UNSPECV_HIPAIC_MULTIPLY))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.mul\t%0,%1,%2"
-  [(set_attr "mode" "SI")])
+  [(set_attr "type" "secret_mul")
+   (set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_getnextrand"
   [(set (match_operand:SI 0 "register_operand" "=r")
@@ -624,7 +628,9 @@
      UNSPECV_HIPAIC_GETNEXTRAND))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.nxtrnd\t%0"
-  [(set_attr "mode" "SI")])
+  [(set_attr "type" "secret_newrand")
+   (set_attr "mode" "SI")])
+;; getnextrand's type is similar to gennewrand because their main burden is move RNG to next. We can refine later if needed
 
 ;;
 ;;  ....................
@@ -2572,3 +2578,4 @@
 (include "pic.md")
 (include "generic.md")
 (include "sifive-7.md")
+(include "hipaic-0.md")
