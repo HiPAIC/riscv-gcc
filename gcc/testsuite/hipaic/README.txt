@@ -1,20 +1,20 @@
 Suppose you have built the toolchain and the executables are at $DIR (e.g. ~/riscv/bin).
 
 How to test multiply* files:
- $DIR/riscv32-unknown-elf-gcc -mhipaic-x-arith -g -O2 -S multiply1.c
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -S multiply1.c
 This generates multiply1.s with source symbol info. Look at it, the bar() function must call 6 instances of hp.grnd, hp.lopx, hp.mul with correct params.
 Make sure none of them are optimized out, and the order is correct. multiply1.s.gold is a golden .s output with comments (starting with #) to explain control flow.
 Script below compares them and prints OK if good. sed matches comment lines # with optional starting white space and delete them; diff - file compares stdin with file.
  sed '/^\s*#/d' multiply1.s.gold | diff - multiply1.s && echo "OK! gold matches generated .s"
 
- $DIR/riscv32-unknown-elf-gcc -mhipaic-x-arith -O2 -c multiply1.c
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -c multiply1.c
 
- $DIR/riscv32-unknown-elf-gcc -mhipaic-x-arith -O2 -o multiply2 multiply2.c && $DIR/riscv32-unknown-elf-run ./multiply2
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -o multiply2 multiply2.c && $DIR/riscv32-unknown-elf-run ./multiply2
 Should prompt you to input two ints. "6000 70000" should output "123302769".
  $DIR/riscv32-unknown-elf-run --trace-insn --trace-reg ./multiply2 2> multiply2.trace.txt
 This shows the detailed trace. You can check the hp.grnd, hp.lopx, hp.mul instructions.
 
- $DIR/riscv32-unknown-elf-gcc -g -mhipaic-x-arith -S multiply2.c && $DIR/riscv32-unknown-elf-as -o multiply2_b.o multiply2.s && $DIR/riscv32-unknown-elf-gcc -o multiply2_b multiply2_b.o && $DIR/riscv32-unknown-elf-run ./multiply2_b
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -g -mhipaic-x-arith -S multiply2.c && $DIR/riscv32-unknown-elf-as -o multiply2_b.o multiply2.s && $DIR/riscv32-unknown-elf-gcc -o multiply2_b multiply2_b.o && $DIR/riscv32-unknown-elf-run ./multiply2_b
 This first generate multiply2.s, then generate multiply2_b.o, then link it to genereate multiply2_b. Test all tools are OK.
 Compare the result of ./multiply2_b with ./multiply2 on several inputs to make sure they match:
  INPUT="6000 70000"; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2_b  # Output: 123302769
@@ -23,6 +23,23 @@ Compare the result of ./multiply2_b with ./multiply2 on several inputs to make s
  INPUT="-56 189"; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2_b  # Output: 3378
  INPUT="77 654321"; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2_b  # Output: 967944
  INPUT="888 -10000"; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2; echo $INPUT | $DIR/riscv32-unknown-elf-run ./multiply2_b  # Output: -39748908
+
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -S multiply3.c
+Verify that after "hp.mul	a4,a4,a7", two instructions that do not depend on a4 are inserted before a4 is used. This is to avoid stall.
+ sed '/^\s*#/d' multiply3.s.gold | diff - multiply3.s && echo "OK! gold matches generated .s"
+ If we do not tune for hipaic, but instead execute $DIR/riscv32-unknown-elf-gcc -mtune=rocket -mhipaic-x-arith -O2 -S multiply3.c
+ We may observe that after hp.mul, not enough data-independent instructions were inserted, and there will be stall.
+
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -o multiply4 multiply4.c && $DIR/riscv32-unknown-elf-run ./multiply4
+The output should be:
+u[0]=0 v[0]=0 result[0]=9
+u[1]=567 v[1]=1234 result[1]=28
+u[2]=1134 v[2]=2468 result[2]=68
+u[3]=1701 v[3]=3702 result[3]=129
+u[4]=2268 v[4]=4936 result[4]=211
+u[5]=2835 v[5]=6170 result[5]=314
+u[6]=3402 v[6]=7404 result[6]=437
+u[7]=3969 v[7]=8638 result[7]=582
 
 How to test addmul* files:
 

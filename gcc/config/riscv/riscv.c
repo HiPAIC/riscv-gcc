@@ -57,6 +57,11 @@ along with GCC; see the file COPYING3.  If not see
 #include "predict.h"
 #include "tree-pass.h"
 
+// With hipaic-0.md customizing latencies, we do not need to hook TARGET_SCHED_ADJUST_COST
+// But we keep the hook code in this file. Uncomment next line if you want to inspect or
+// adjust instruction scheduling cost calculation.
+// #define HIPAIC_DEBUG_TARGET_SCHED_ADJUST_COST
+
 /* True if X is an UNSPEC wrapper around a SYMBOL_REF or LABEL_REF.  */
 #define UNSPEC_ADDRESS_P(X)					\
   (GET_CODE (X) == UNSPEC					\
@@ -4579,15 +4584,23 @@ riscv_issue_rate (void)
 
 // insn is consumer, dep_insn is producer. See dep_cost_1() in haifa-sched.c.
 // cost is roughly the latency in cycle between dep_insn and insn. See dep_cost_1() and insn_default_latency()
-// dep_type: REG_DEP_TRUE, REG_DEP_ANTI, REG_DEP_OUTPUT see reg-notes.def
+// dep_type: REG_DEP_TRUE=0, REG_DEP_OUTPUT=11, REG_DEP_ANTI=12, REG_DEP_CONTROL=13
+// see reg-notes.def (DEF_REG_NOTE defined in rtl.h) and sched-deps.c
 static int riscv_adjust_cost(rtx_insn *insn, int dep_type, rtx_insn *dep_insn, int cost, unsigned int dw) {
   int newcost = cost;
+
+#ifdef HIPAIC_DEBUG_TARGET_SCHED_ADJUST_COST
   // insn codes are at build-gcc-newlib-stage1/gcc/insn-codes.h
   if (INSN_CODE(dep_insn) == CODE_FOR_riscv_hipaic_multiply && dep_type != REG_DEP_ANTI) {
+    // NOTE: because hipaic-0.md already customized latency for multiply, we should not increase newcost here
+    // This code is kept here only to show how we can adjust the cost.
     newcost += 2;
   }
-  fprintf(stderr, "xzl riscv_adjust_cost insn %d dep_type %d dep_insn %d cost %d newcost%c %d dw %d\n",
-    INSN_CODE(insn), dep_type, INSN_CODE(dep_insn), cost, (newcost == cost ? ' ' : '!'), newcost, dw);
+  printf("xzl riscv_adjust_cost insn %d (%d) dep_type %d dep_insn %d (%d) cost %d newcost%c %d dw %d DEP_TRUE=%d DEP_OUTPUT=%d DEP_ANTI=%d DEP_CONTROL=%d\n",
+    INSN_UID(insn), INSN_CODE(insn), dep_type, INSN_UID(dep_insn), INSN_CODE(dep_insn), cost, (newcost == cost ? ' ' : '!'), newcost, dw,
+    REG_DEP_TRUE, REG_DEP_OUTPUT, REG_DEP_ANTI, REG_DEP_CONTROL);
+#endif // HIPAIC_DEBUG_TARGET_SCHED_ADJUST_COST
+
   return newcost;
 }
 
@@ -5298,8 +5311,10 @@ riscv_new_address_profitable_p (rtx memref, rtx_insn *insn, rtx new_addr)
 #undef TARGET_SCHED_ISSUE_RATE
 #define TARGET_SCHED_ISSUE_RATE riscv_issue_rate
 
+#ifdef HIPAIC_DEBUG_TARGET_SCHED_ADJUST_COST
 #undef  TARGET_SCHED_ADJUST_COST
 #define TARGET_SCHED_ADJUST_COST riscv_adjust_cost
+#endif // HIPAIC_DEBUG_TARGET_SCHED_ADJUST_COST
 
 #undef TARGET_FUNCTION_OK_FOR_SIBCALL
 #define TARGET_FUNCTION_OK_FOR_SIBCALL riscv_function_ok_for_sibcall

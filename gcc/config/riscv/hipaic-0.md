@@ -5,6 +5,8 @@
 (define_cpu_unit "hipaic_0_alu" "hipaic_0")
 (define_cpu_unit "hipaic_0_imuldiv" "hipaic_0")
 (define_cpu_unit "hipaic_0_fdivsqrt" "hipaic_0")
+(define_cpu_unit "hipaic_0_secret_mul" "hipaic_0")
+
 
 (define_insn_reservation "hipaic_0_alu" 1
   (and (eq_attr "tune" "hipaic_0")
@@ -81,10 +83,9 @@
   "hipaic_0_alu")
 
 ;; secret multiply is implemented with 3 cycle latency.
-;; We do not refine the cpu_unit for now. If needed, we can define resources like RNG, secret multiplier, etc.
-;; But now it does not change any instruction latency / conflict because we do not have multi-issue.
-;; So we keep the DFA as simple as possible.
+;; This is 3 cycle so we don't want to reserve ALU. We must reserve a separate unit.
+;; Otherwise it forces delay 3 cycles even if the next 2 instructions are not data dependent on this.
 (define_insn_reservation "hipaic_0_secret_multiply" 3
   (and (eq_attr "tune" "hipaic_0")
        (eq_attr "type" "secret_mul"))
-  "hipaic_0_alu*3")
+  "hipaic_0_secret_mul*3")

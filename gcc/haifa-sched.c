@@ -7175,6 +7175,7 @@ setup_sched_dump (void)
   sched_dump = dump_file;
   if (!dump_file)
     sched_verbose = 0;
+  // NOTE(xzl): if we want to see sched dump, replace the above line with sched_dump = stdout;
 }
 
 /* Allocate data for register pressure sensitive scheduling.  */

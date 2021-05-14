@@ -255,14 +255,19 @@ extern const char *riscv_default_mtune (int argc, const char **argv);
 
    - 32 integer registers
    - 32 floating point registers
-   - 2 fake registers:
+   - 4 fake registers:
 	- ARG_POINTER_REGNUM
-	- FRAME_POINTER_REGNUM */
+	- FRAME_POINTER_REGNUM 
+  - SECRET_RNG_REGNUM
+  - SECRET_RAND_WINDOW_REGNUM collapse all array elements into one reg (over-estimate of alias)
+  - SECRET_OPX_REGNUM collapse OpX input_u and input_r_idx_u into one reg
+  */
 
-#define FIRST_PSEUDO_REGISTER 66
+#define FIRST_PSEUDO_REGISTER 69
 
 /* x0, sp, gp, and tp are fixed.  */
 
+// NOTE(xzl): fixed registers won't be allocated or spilled to. See reload1.c, reginfo.c
 #define FIXED_REGISTERS							\
 { /* General registers.  */						\
   1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
@@ -271,7 +276,9 @@ extern const char *riscv_default_mtune (int argc, const char **argv);
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   /* Others.  */							\
-  1, 1									\
+  1, 1, \
+  /* HiPAIC secret. */ \
+  1, 1, 1, \
 }
 
 /* a0-a7, t0-t6, fa0-fa7, and ft0-ft11 are volatile across calls.
@@ -285,7 +292,9 @@ extern const char *riscv_default_mtune (int argc, const char **argv);
   1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1,			\
   1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,			\
   /* Others.  */							\
-  1, 1									\
+  1, 1,									\
+  /* HiPAIC secret. TODO(xzl): are they call clobbered or not? */ \
+  0, 0, 0, \
 }
 
 /* Select a register mode required for caller save of hard regno REGNO.
@@ -436,7 +445,7 @@ enum reg_class
   { 0xffffffff, 0x00000000, 0x00000000 },	/* GR_REGS */		\
   { 0x00000000, 0xffffffff, 0x00000000 },	/* FP_REGS */		\
   { 0x00000000, 0x00000000, 0x00000003 },	/* FRAME_REGS */	\
-  { 0xffffffff, 0xffffffff, 0x00000003 }	/* ALL_REGS */		\
+  { 0xffffffff, 0xffffffff, 0x0000001f }	/* ALL_REGS */		\
 }
 
 /* A C expression whose value is a register class containing hard
@@ -478,7 +487,9 @@ enum reg_class
   40, 41, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,			\
   /* None of the remaining classes have defined call-saved		\
      registers.  */							\
-  64, 65								\
+  64, 65,								\
+  /* HiPAIC secret should never be allocated. but we need to define their order here because ira.c reload1.c will use it  */ \
+  66, 67, 68, \
 }
 
 /* True if VALUE is a signed 12-bit number.  */
@@ -736,7 +747,8 @@ typedef struct {
   "fs0", "fs1", "fa0", "fa1", "fa2", "fa3", "fa4", "fa5",	\
   "fa6", "fa7", "fs2", "fs3", "fs4", "fs5", "fs6", "fs7",	\
   "fs8", "fs9", "fs10","fs11","ft8", "ft9", "ft10","ft11",	\
-  "arg", "frame", }
+  "arg", "frame", \
+  "secretrng", "secretrandwin", "secretopx"}
 
 #define ADDITIONAL_REGISTER_NAMES					\
 {									\
