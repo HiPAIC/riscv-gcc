@@ -4354,6 +4354,10 @@ riscv_epilogue_uses (unsigned int regno)
   if (regno == RETURN_ADDR_REGNUM)
     return true;
 
+  if (regno == SECRET_RNG_REGNUM || regno == SECRET_RAND_WINDOW_REGNUM || regno == SECRET_OPX_REGNUM) {
+    return true;
+  }
+
   if (epilogue_completed && cfun->machine->interrupt_handler_p)
     {
       /* An interrupt function restores temp regs, so we must indicate that

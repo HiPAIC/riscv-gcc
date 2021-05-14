@@ -293,8 +293,8 @@ extern const char *riscv_default_mtune (int argc, const char **argv);
   1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,			\
   /* Others.  */							\
   1, 1,									\
-  /* HiPAIC secret. TODO(xzl): are they call clobbered or not? */ \
-  0, 0, 0, \
+  /* HiPAIC secret. NOTE(xzl): fixed regs are always call clobbered. */ \
+  1, 1, 1, \
 }
 
 /* Select a register mode required for caller save of hard regno REGNO.
