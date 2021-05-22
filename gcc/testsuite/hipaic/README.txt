@@ -2,7 +2,7 @@ Suppose you have built the toolchain and the executables are at $DIR (e.g. ~/ris
 
 How to test multiply* files:
  $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -S multiply1.c
-This generates multiply1.s with source symbol info. Look at it, the bar() function must call 6 instances of hp.grnd, hp.lopx, hp.mul with correct params.
+This generates multiply1.s with source symbol info. Look at it, the bar() function must call 6 instances of hp.savrnd, hp.ldopx, hp.mul with correct params.
 Make sure none of them are optimized out, and the order is correct. multiply1.s.gold is a golden .s output with comments (starting with #) to explain control flow.
 Script below compares them and prints OK if good. sed matches comment lines # with optional starting white space and delete them; diff - file compares stdin with file.
  sed '/^\s*#/d' multiply1.s.gold | diff - multiply1.s && echo "OK! gold matches generated .s"

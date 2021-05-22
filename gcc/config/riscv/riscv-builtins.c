@@ -137,10 +137,10 @@ static const struct riscv_builtin_description riscv_builtins[] = {
   DIRECT_NO_TARGET_BUILTIN (fsflags, RISCV_VOID_FTYPE_USI, hard_float),
 
   DIRECT_BUILTIN (hipaic_mulsi, RISCV_SI_FTYPE_SI_SI, hipaic_extended_arith),
-  DIRECT_NO_TARGET_BUILTIN (hipaic_gennewrand, RISCV_VOID_FTYPE_SI, hipaic_extended_arith),
+  DIRECT_NO_TARGET_BUILTIN (hipaic_saverand, RISCV_VOID_FTYPE_SI, hipaic_extended_arith),
   DIRECT_NO_TARGET_BUILTIN (hipaic_loadopx, RISCV_VOID_FTYPE_SI_SI, hipaic_extended_arith),
   DIRECT_BUILTIN (hipaic_multiply, RISCV_SI_FTYPE_SI_SI, hipaic_extended_arith),
-  DIRECT_BUILTIN (hipaic_getnextrand, RISCV_SI_FTYPE, hipaic_extended_arith),
+  DIRECT_BUILTIN (hipaic_getrand, RISCV_SI_FTYPE, hipaic_extended_arith),
 };
 
 /* Index I is the function declaration for riscv_builtins[I], or null if the

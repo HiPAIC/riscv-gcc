@@ -47,12 +47,12 @@
   UNSPEC_TIE
 
   ;; HiPAIC extended
-  UNSPEC_HIPAIC_GENNEWRAND
-  UNSPEC_HIPAIC_GENNEWRAND_RNG
+  UNSPEC_HIPAIC_SAVERAND
+  UNSPEC_HIPAIC_SAVERAND_RNG
   UNSPEC_HIPAIC_LOADOPX
   UNSPEC_HIPAIC_MULTIPLY
   UNSPEC_HIPAIC_MULTIPLY_RNG
-  UNSPEC_HIPAIC_GETNEXTRAND_RNG
+  UNSPEC_HIPAIC_GETRAND_RNG
 ])
 
 (define_c_enum "unspecv" [
@@ -73,6 +73,11 @@
   UNSPECV_BLOCKAGE
   UNSPECV_FENCE
   UNSPECV_FENCE_I
+
+  UNSPECV_HIPAIC_SAVERAND
+  UNSPECV_HIPAIC_LOADOPX
+  UNSPECV_HIPAIC_MULTIPLY
+  UNSPECV_HIPAIC_GETRAND
 ])
 
 (define_constants
@@ -603,55 +608,87 @@
   [(set_attr "type" "imul")
    (set_attr "mode" "SI")])
 
-(define_insn "riscv_hipaic_gennewrand"
-  [(parallel [
-    (set (reg:SI SECRET_RAND_WINDOW_REGNUM) (unspec [
-      (reg:SI SECRET_RNG_REGNUM)
-      (match_operand:SI 0 "register_operand" "r")]
-      UNSPEC_HIPAIC_GENNEWRAND))
-    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GENNEWRAND_RNG))
-  ])]
+;; (define_insn "riscv_hipaic_saverand"
+;;   [(parallel [
+;;     (set (reg:SI SECRET_RAND_WINDOW_REGNUM) (unspec [
+;;       (reg:SI SECRET_RNG_REGNUM)
+;;       (match_operand:SI 0 "register_operand" "r")]
+;;       UNSPEC_HIPAIC_SAVERAND))
+;;     (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_SAVERAND_RNG))
+;;   ])]
+;;   "TARGET_HIPAIC_EXTENDED_ARITH"
+;;   "hp.savrnd\t%0"
+;;   [(set_attr "type" "secret_newrand")
+;;    (set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_saverand"
+  [(unspec_volatile [(match_operand:SI 0 "register_operand" "r")]
+   UNSPECV_HIPAIC_SAVERAND)]
   "TARGET_HIPAIC_EXTENDED_ARITH"
-  "hp.genrnd\t%0"
+  "hp.savrnd\t%0"
   [(set_attr "type" "secret_newrand")
    (set_attr "mode" "SI")])
 
+;; (define_insn "riscv_hipaic_loadopx"
+;;   [(set (reg:SI SECRET_OPX_REGNUM) (unspec [
+;;     (match_operand:SI 0 "register_operand" "r")
+;;     (match_operand:SI 1 "register_operand" "r")]
+;;     UNSPEC_HIPAIC_LOADOPX))]
+;;   "TARGET_HIPAIC_EXTENDED_ARITH"
+;;   "hp.ldopx\t%0,%1"
+;;   [(set_attr "type" "secret_opx")
+;;    (set_attr "mode" "SI")])
+
 (define_insn "riscv_hipaic_loadopx"
-  [(set (reg:SI SECRET_OPX_REGNUM) (unspec [
-    (match_operand:SI 0 "register_operand" "r")
-    (match_operand:SI 1 "register_operand" "r")]
-    UNSPEC_HIPAIC_LOADOPX))]
+  [(unspec_volatile [(match_operand:SI 0 "register_operand" "r") (match_operand:SI 1 "register_operand" "r")]
+   UNSPECV_HIPAIC_LOADOPX)]
   "TARGET_HIPAIC_EXTENDED_ARITH"
-  "hp.lopx\t%0,%1"
+  "hp.ldopx\t%0,%1"
   [(set_attr "type" "secret_opx")
    (set_attr "mode" "SI")])
 
+;; (define_insn "riscv_hipaic_multiply"
+;;   [(parallel [
+;;     (set (match_operand:SI 0 "register_operand" "=r") (unspec [
+;;       (reg:SI SECRET_RNG_REGNUM)
+;;       (reg:SI SECRET_RAND_WINDOW_REGNUM)
+;;       (reg:SI SECRET_OPX_REGNUM)
+;;       (match_operand:SI 1 "register_operand" "r")
+;;       (match_operand:SI 2 "register_operand" "r")
+;;     ] UNSPEC_HIPAIC_MULTIPLY))
+;;     (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_MULTIPLY_RNG))
+;;   ])]
+;;   "TARGET_HIPAIC_EXTENDED_ARITH"
+;;   "hp.mul\t%0,%1,%2"
+;;   [(set_attr "type" "secret_mul")
+;;    (set_attr "mode" "SI")])
+
 (define_insn "riscv_hipaic_multiply"
-  [(parallel [
-    (set (match_operand:SI 0 "register_operand" "=r") (unspec [
-      (reg:SI SECRET_RNG_REGNUM)
-      (reg:SI SECRET_RAND_WINDOW_REGNUM)
-      (reg:SI SECRET_OPX_REGNUM)
-      (match_operand:SI 1 "register_operand" "r")
-      (match_operand:SI 2 "register_operand" "r")
-    ] UNSPEC_HIPAIC_MULTIPLY))
-    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_MULTIPLY_RNG))
-  ])]
+  [(set (match_operand:SI 0 "register_operand" "=r")
+    (unspec_volatile [(match_operand:SI 1 "register_operand" "r") (match_operand:SI 2 "register_operand" "r")]
+     UNSPECV_HIPAIC_MULTIPLY))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.mul\t%0,%1,%2"
   [(set_attr "type" "secret_mul")
    (set_attr "mode" "SI")])
 
-(define_insn "riscv_hipaic_getnextrand"
-  [(parallel [
-    (set (match_operand:SI 0 "register_operand" "=r") (reg:SI SECRET_RNG_REGNUM))
-    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETNEXTRAND_RNG))
-  ])]
+;; (define_insn "riscv_hipaic_getrand"
+;;   [(parallel [
+;;     (set (match_operand:SI 0 "register_operand" "=r") (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETRAND_RNG))
+;;     (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETRAND_RNG))
+;;   ])]
+;;   "TARGET_HIPAIC_EXTENDED_ARITH"
+;;   "hp.getrnd\t%0"
+;;   [(set_attr "type" "secret_newrand")
+;;    (set_attr "mode" "SI")])
+;; getnextrand's type is similar to saverand because their main job is move RNG to next. We can refine later if needed
+
+(define_insn "riscv_hipaic_getrand"
+  [(set (match_operand:SI 0 "register_operand" "=r") (unspec_volatile [(const_int 1)] UNSPECV_HIPAIC_GETRAND))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
-  "hp.nxtrnd\t%0"
+  "hp.getrnd\t%0"
   [(set_attr "type" "secret_newrand")
    (set_attr "mode" "SI")])
-;; getnextrand's type is similar to gennewrand because their main burden is move RNG to next. We can refine later if needed
 
 ;;
 ;;  ....................
