@@ -666,19 +666,25 @@
 
 (define_insn "riscv_hipaic_multiply"
   [(set (match_operand:SI 0 "register_operand" "=r")
-    (unspec_volatile [(match_operand:SI 1 "register_operand" "r") (match_operand:SI 2 "register_operand" "r")]
+    (unspec_volatile [
+      (match_operand:SI 1 "register_operand" "r")
+      (match_operand:SI 2 "register_operand" "r")
+      (match_operand:SI 3 "register_operand" "r")]
      UNSPECV_HIPAIC_MULTIPLY))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
-  "hp.mul\t%0,%1,%2"
+  "hp.mul\t%0,%1,%2,%3"
   [(set_attr "type" "secret_mul")
    (set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_bitand"
   [(set (match_operand:SI 0 "register_operand" "=r")
-    (unspec_volatile [(match_operand:SI 1 "register_operand" "r") (match_operand:SI 2 "register_operand" "r")]
+    (unspec_volatile [
+      (match_operand:SI 1 "register_operand" "r")
+      (match_operand:SI 2 "register_operand" "r")
+      (match_operand:SI 3 "register_operand" "r")]
      UNSPECV_HIPAIC_BITAND))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
-  "hp.bitand\t%0,%1,%2"
+  "hp.bitand\t%0,%1,%2,%3"
   [(set_attr "type" "secret_mul")
    (set_attr "mode" "SI")])
 ;; bitand is like secret_mul with regard to instruction scheduling automata. See hipaic-0.md

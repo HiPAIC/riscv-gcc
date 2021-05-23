@@ -41,6 +41,14 @@ u[5]=2835 v[5]=6170 result[5]=314
 u[6]=3402 v[6]=7404 result[6]=437
 u[7]=3969 v[7]=8638 result[7]=582
 
+ $DIR/riscv32-unknown-elf-gcc -mtune=hipaic-0 -mhipaic-x-arith -O2 -o bitand2 bitand2.c && $DIR/riscv32-unknown-elf-run ./bitand2
+Input two int32 u v:
+6000 70000
+bar(u, v)= 59911280
+
+ $DIR/riscv32-unknown-elf-run --trace-insn --trace-reg ./bitand2 2> bitand2.trace.txt
+
+
 How to test addmul* files:
 
  $DIR/riscv32-unknown-elf-gcc -mhipaic-x-arith -O2 -S addmul1.c

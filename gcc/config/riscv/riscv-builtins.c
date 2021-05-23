@@ -41,6 +41,7 @@ along with GCC; see the file COPYING3.  If not see
 #define RISCV_FTYPE_NAME0(A) RISCV_##A##_FTYPE
 #define RISCV_FTYPE_NAME1(A, B) RISCV_##A##_FTYPE_##B
 #define RISCV_FTYPE_NAME2(A, B, C) RISCV_##A##_FTYPE_##B##_##C
+#define RISCV_FTYPE_NAME3(A, B, C, D) RISCV_##A##_FTYPE_##B##_##C##_##D
 
 /* Classifies the prototype of a built-in function.  */
 enum riscv_function_type {
@@ -131,6 +132,8 @@ AVAIL (hipaic_extended_arith, TARGET_HIPAIC_EXTENDED_ARITH)
   RISCV_ATYPE_##A, RISCV_ATYPE_##B
 #define RISCV_FTYPE_ATYPES2(A, B, C) \
   RISCV_ATYPE_##A, RISCV_ATYPE_##B, RISCV_ATYPE_##C
+#define RISCV_FTYPE_ATYPES3(A, B, C, D) \
+  RISCV_ATYPE_##A, RISCV_ATYPE_##B, RISCV_ATYPE_##C, RISCV_ATYPE_##D
 
 static const struct riscv_builtin_description riscv_builtins[] = {
   DIRECT_BUILTIN (frflags, RISCV_USI_FTYPE, hard_float),
@@ -139,8 +142,8 @@ static const struct riscv_builtin_description riscv_builtins[] = {
   DIRECT_BUILTIN (hipaic_mulsi, RISCV_SI_FTYPE_SI_SI, hipaic_extended_arith),
   DIRECT_NO_TARGET_BUILTIN (hipaic_saverand, RISCV_VOID_FTYPE_SI, hipaic_extended_arith),
   DIRECT_NO_TARGET_BUILTIN (hipaic_loadopx, RISCV_VOID_FTYPE_SI_SI, hipaic_extended_arith),
-  DIRECT_BUILTIN (hipaic_multiply, RISCV_SI_FTYPE_SI_SI, hipaic_extended_arith),
-  DIRECT_BUILTIN (hipaic_bitand, RISCV_SI_FTYPE_SI_SI, hipaic_extended_arith),
+  DIRECT_BUILTIN (hipaic_multiply, RISCV_SI_FTYPE_SI_SI_SI, hipaic_extended_arith),
+  DIRECT_BUILTIN (hipaic_bitand, RISCV_SI_FTYPE_SI_SI_SI, hipaic_extended_arith),
   DIRECT_BUILTIN (hipaic_getrand, RISCV_SI_FTYPE, hipaic_extended_arith),
 };
 
