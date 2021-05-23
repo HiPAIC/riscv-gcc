@@ -4354,10 +4354,6 @@ riscv_epilogue_uses (unsigned int regno)
   if (regno == RETURN_ADDR_REGNUM)
     return true;
 
-  if (regno == SECRET_RNG_REGNUM || regno == SECRET_RAND_WINDOW_REGNUM || regno == SECRET_OPX_REGNUM) {
-    return true;
-  }
-
   if (epilogue_completed && cfun->machine->interrupt_handler_p)
     {
       /* An interrupt function restores temp regs, so we must indicate that
@@ -4834,6 +4830,10 @@ riscv_option_override (void)
 static void
 riscv_conditional_register_usage (void)
 {
+  global_regs[SECRET_RNG_REGNUM] = 1;
+  global_regs[SECRET_RAND_WINDOW_REGNUM] = 1;
+  global_regs[SECRET_OPX_REGNUM] = 1;
+
   /* We have only x0~x15 on RV32E.  */
   if (TARGET_RVE)
     {

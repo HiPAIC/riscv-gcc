@@ -52,6 +52,10 @@
   UNSPEC_HIPAIC_LOADOPX
   UNSPEC_HIPAIC_MULTIPLY
   UNSPEC_HIPAIC_MULTIPLY_RNG
+  UNSPEC_HIPAIC_MULTIPLY_RAND_WINDOW
+  UNSPEC_HIPAIC_BITAND
+  UNSPEC_HIPAIC_BITAND_RNG
+  UNSPEC_HIPAIC_BITAND_RAND_WINDOW
   UNSPEC_HIPAIC_GETRAND_RNG
 ])
 
@@ -609,103 +613,129 @@
   [(set_attr "type" "imul")
    (set_attr "mode" "SI")])
 
-;; (define_insn "riscv_hipaic_saverand"
-;;   [(parallel [
-;;     (set (reg:SI SECRET_RAND_WINDOW_REGNUM) (unspec [
-;;       (reg:SI SECRET_RNG_REGNUM)
-;;       (match_operand:SI 0 "register_operand" "r")]
-;;       UNSPEC_HIPAIC_SAVERAND))
-;;     (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_SAVERAND_RNG))
-;;   ])]
-;;   "TARGET_HIPAIC_EXTENDED_ARITH"
-;;   "hp.savrnd\t%0"
-;;   [(set_attr "type" "secret_newrand")
-;;    (set_attr "mode" "SI")])
-
 (define_insn "riscv_hipaic_saverand"
-  [(unspec_volatile [(match_operand:SI 0 "register_operand" "r")]
-   UNSPECV_HIPAIC_SAVERAND)]
+  [(parallel [
+    (set (reg:SI SECRET_RAND_WINDOW_REGNUM) (unspec [
+      (reg:SI SECRET_RNG_REGNUM)
+      (match_operand:SI 0 "register_operand" "r")]
+      UNSPEC_HIPAIC_SAVERAND))
+    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_SAVERAND_RNG))
+  ])]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.savrnd\t%0"
   [(set_attr "type" "secret_newrand")
    (set_attr "mode" "SI")])
 
-;; (define_insn "riscv_hipaic_loadopx"
-;;   [(set (reg:SI SECRET_OPX_REGNUM) (unspec [
-;;     (match_operand:SI 0 "register_operand" "r")
-;;     (match_operand:SI 1 "register_operand" "r")]
-;;     UNSPEC_HIPAIC_LOADOPX))]
+;; (define_insn "xzl_disable_this_riscv_hipaic_saverand"
+;;   [(unspec_volatile [(match_operand:SI 0 "register_operand" "r")]
+;;    UNSPECV_HIPAIC_SAVERAND)]
 ;;   "TARGET_HIPAIC_EXTENDED_ARITH"
-;;   "hp.ldopx\t%0,%1"
-;;   [(set_attr "type" "secret_opx")
+;;   "hp.savrnd\t%0"
+;;   [(set_attr "type" "secret_newrand")
 ;;    (set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_loadopx"
-  [(unspec_volatile [(match_operand:SI 0 "register_operand" "r") (match_operand:SI 1 "register_operand" "r")]
-   UNSPECV_HIPAIC_LOADOPX)]
+  [(set (reg:SI SECRET_OPX_REGNUM) (unspec [
+    (reg:SI SECRET_RAND_WINDOW_REGNUM)
+    (match_operand:SI 0 "register_operand" "r")
+    (match_operand:SI 1 "register_operand" "r")]
+    UNSPEC_HIPAIC_LOADOPX))]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.ldopx\t%0,%1"
   [(set_attr "type" "secret_opx")
    (set_attr "mode" "SI")])
 
-;; (define_insn "riscv_hipaic_multiply"
-;;   [(parallel [
-;;     (set (match_operand:SI 0 "register_operand" "=r") (unspec [
-;;       (reg:SI SECRET_RNG_REGNUM)
-;;       (reg:SI SECRET_RAND_WINDOW_REGNUM)
-;;       (reg:SI SECRET_OPX_REGNUM)
-;;       (match_operand:SI 1 "register_operand" "r")
-;;       (match_operand:SI 2 "register_operand" "r")
-;;     ] UNSPEC_HIPAIC_MULTIPLY))
-;;     (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_MULTIPLY_RNG))
-;;   ])]
+;; (define_insn "xzl_disable_this_riscv_hipaic_loadopx"
+;;   [(unspec_volatile [(match_operand:SI 0 "register_operand" "r") (match_operand:SI 1 "register_operand" "r")]
+;;    UNSPECV_HIPAIC_LOADOPX)]
 ;;   "TARGET_HIPAIC_EXTENDED_ARITH"
-;;   "hp.mul\t%0,%1,%2"
-;;   [(set_attr "type" "secret_mul")
+;;   "hp.ldopx\t%0,%1"
+;;   [(set_attr "type" "secret_opx")
 ;;    (set_attr "mode" "SI")])
 
 (define_insn "riscv_hipaic_multiply"
-  [(set (match_operand:SI 0 "register_operand" "=r")
-    (unspec_volatile [
+  [(parallel [
+    (set (match_operand:SI 0 "register_operand" "=r") (unspec [
+      (reg:SI SECRET_RNG_REGNUM)
+      (reg:SI SECRET_RAND_WINDOW_REGNUM)
+      (reg:SI SECRET_OPX_REGNUM)
       (match_operand:SI 1 "register_operand" "r")
       (match_operand:SI 2 "register_operand" "r")
+    ] UNSPEC_HIPAIC_MULTIPLY))
+    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_MULTIPLY_RNG))
+    (set (reg:SI SECRET_RAND_WINDOW_REGNUM) (unspec [
+      (reg:SI SECRET_RNG_REGNUM)
       (match_operand:SI 3 "register_operand" "r")]
-     UNSPECV_HIPAIC_MULTIPLY))]
+      UNSPEC_HIPAIC_MULTIPLY_RAND_WINDOW))
+  ])]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.mul\t%0,%1,%2,%3"
   [(set_attr "type" "secret_mul")
    (set_attr "mode" "SI")])
 
+;; (define_insn "xzl_disable_this_riscv_hipaic_multiply"
+;;   [(set (match_operand:SI 0 "register_operand" "=r")
+;;     (unspec_volatile [
+;;       (match_operand:SI 1 "register_operand" "r")
+;;       (match_operand:SI 2 "register_operand" "r")
+;;       (match_operand:SI 3 "register_operand" "r")]
+;;      UNSPECV_HIPAIC_MULTIPLY))]
+;;   "TARGET_HIPAIC_EXTENDED_ARITH"
+;;   "hp.mul\t%0,%1,%2,%3"
+;;   [(set_attr "type" "secret_mul")
+;;    (set_attr "mode" "SI")])
+
 (define_insn "riscv_hipaic_bitand"
-  [(set (match_operand:SI 0 "register_operand" "=r")
-    (unspec_volatile [
+  [(parallel [
+    (set (match_operand:SI 0 "register_operand" "=r") (unspec [
+      (reg:SI SECRET_RNG_REGNUM)
+      (reg:SI SECRET_RAND_WINDOW_REGNUM)
+      (reg:SI SECRET_OPX_REGNUM)
       (match_operand:SI 1 "register_operand" "r")
       (match_operand:SI 2 "register_operand" "r")
+    ] UNSPEC_HIPAIC_BITAND))
+    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_BITAND_RNG))
+    (set (reg:SI SECRET_RAND_WINDOW_REGNUM) (unspec [
+      (reg:SI SECRET_RNG_REGNUM)
       (match_operand:SI 3 "register_operand" "r")]
-     UNSPECV_HIPAIC_BITAND))]
+      UNSPEC_HIPAIC_BITAND_RAND_WINDOW))
+  ])]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.bitand\t%0,%1,%2,%3"
   [(set_attr "type" "secret_mul")
    (set_attr "mode" "SI")])
 ;; bitand is like secret_mul with regard to instruction scheduling automata. See hipaic-0.md
 
-;; (define_insn "riscv_hipaic_getrand"
-;;   [(parallel [
-;;     (set (match_operand:SI 0 "register_operand" "=r") (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETRAND_RNG))
-;;     (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETRAND_RNG))
-;;   ])]
+;; (define_insn "xzl_disable_this_riscv_hipaic_bitand"
+;;   [(set (match_operand:SI 0 "register_operand" "=r")
+;;     (unspec_volatile [
+;;       (match_operand:SI 1 "register_operand" "r")
+;;       (match_operand:SI 2 "register_operand" "r")
+;;       (match_operand:SI 3 "register_operand" "r")]
+;;      UNSPECV_HIPAIC_BITAND))]
 ;;   "TARGET_HIPAIC_EXTENDED_ARITH"
-;;   "hp.getrnd\t%0"
-;;   [(set_attr "type" "secret_newrand")
+;;   "hp.bitand\t%0,%1,%2,%3"
+;;   [(set_attr "type" "secret_mul")
 ;;    (set_attr "mode" "SI")])
-;; getnextrand's type is similar to saverand because their main job is move RNG to next. We can refine later if needed
+;; bitand is like secret_mul with regard to instruction scheduling automata. See hipaic-0.md
 
 (define_insn "riscv_hipaic_getrand"
-  [(set (match_operand:SI 0 "register_operand" "=r") (unspec_volatile [(const_int 1)] UNSPECV_HIPAIC_GETRAND))]
+  [(parallel [
+    (set (match_operand:SI 0 "register_operand" "=r") (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETRAND_RNG))
+    (set (reg:SI SECRET_RNG_REGNUM) (unspec [(reg:SI SECRET_RNG_REGNUM)] UNSPEC_HIPAIC_GETRAND_RNG))
+  ])]
   "TARGET_HIPAIC_EXTENDED_ARITH"
   "hp.getrnd\t%0"
   [(set_attr "type" "secret_newrand")
    (set_attr "mode" "SI")])
+;; getrand's type is similar to saverand because their main job is move RNG to next. We can refine later if needed
+
+;; (define_insn "xzl_disable_this_riscv_hipaic_getrand"
+;;   [(set (match_operand:SI 0 "register_operand" "=r") (unspec_volatile [(const_int 1)] UNSPECV_HIPAIC_GETRAND))]
+;;   "TARGET_HIPAIC_EXTENDED_ARITH"
+;;   "hp.getrnd\t%0"
+;;   [(set_attr "type" "secret_newrand")
+;;    (set_attr "mode" "SI")])
 
 ;;
 ;;  ....................
