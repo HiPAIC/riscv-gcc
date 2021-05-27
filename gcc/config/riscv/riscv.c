@@ -4833,6 +4833,7 @@ riscv_conditional_register_usage (void)
   global_regs[SECRET_RNG_REGNUM] = 1;
   global_regs[SECRET_RAND_WINDOW_REGNUM] = 1;
   global_regs[SECRET_OPX_REGNUM] = 1;
+  global_regs[SECRET_FIFO_REGNUM] = 1;
 
   /* We have only x0~x15 on RV32E.  */
   if (TARGET_RVE)

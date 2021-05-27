@@ -145,6 +145,8 @@ static const struct riscv_builtin_description riscv_builtins[] = {
   DIRECT_BUILTIN (hipaic_multiply, RISCV_SI_FTYPE_SI_SI_SI, hipaic_extended_arith),
   DIRECT_BUILTIN (hipaic_bitand, RISCV_SI_FTYPE_SI_SI_SI, hipaic_extended_arith),
   DIRECT_BUILTIN (hipaic_getrand, RISCV_SI_FTYPE, hipaic_extended_arith),
+  DIRECT_NO_TARGET_BUILTIN (hipaic_send, RISCV_VOID_FTYPE_SI, hipaic_extended_arith),
+  DIRECT_BUILTIN (hipaic_recv, RISCV_SI_FTYPE, hipaic_extended_arith),
 };
 
 /* Index I is the function declaration for riscv_builtins[I], or null if the

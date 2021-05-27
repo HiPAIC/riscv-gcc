@@ -57,6 +57,9 @@
   UNSPEC_HIPAIC_BITAND_RNG
   UNSPEC_HIPAIC_BITAND_RAND_WINDOW
   UNSPEC_HIPAIC_GETRAND_RNG
+  UNSPEC_HIPAIC_SEND_FIFO
+  UNSPEC_HIPAIC_RECV
+  UNSPEC_HIPAIC_RECV_FIFO
 ])
 
 (define_c_enum "unspecv" [
@@ -110,6 +113,7 @@
    (SECRET_RNG_REGNUM 66)
    (SECRET_RAND_WINDOW_REGNUM 67)
    (SECRET_OPX_REGNUM 68)
+   (SECRET_FIFO_REGNUM 69)
 ])
 
 (include "predicates.md")
@@ -188,7 +192,7 @@
   "unknown,branch,jump,call,load,fpload,store,fpstore,
    mtc,mfc,const,arith,logical,shift,slt,imul,idiv,move,fmove,fadd,fmul,
    fmadd,fdiv,fcmp,fcvt,fsqrt,multi,auipc,sfb_alu,nop,ghost,
-   secret_newrand, secret_opx, secret_mul"
+   secret_newrand, secret_opx, secret_mul, secret_send, secret_recv"
   (cond [(eq_attr "got" "load") (const_string "load")
 
 	 ;; If a doubleword move uses these expensive instructions,
@@ -736,6 +740,23 @@
 ;;   "hp.getrnd\t%0"
 ;;   [(set_attr "type" "secret_newrand")
 ;;    (set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_send"
+  [(set (reg:SI SECRET_FIFO_REGNUM) (unspec [(reg:SI SECRET_FIFO_REGNUM) (match_operand:SI 0 "register_operand" "r")] UNSPEC_HIPAIC_SEND_FIFO))]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  "hp.send\t%0"
+  [(set_attr "type" "secret_send")
+   (set_attr "mode" "SI")])
+
+(define_insn "riscv_hipaic_recv"
+  [(parallel [
+    (set (match_operand:SI 0 "register_operand" "=r") (unspec [(reg:SI SECRET_FIFO_REGNUM)] UNSPEC_HIPAIC_RECV))
+    (set (reg:SI SECRET_FIFO_REGNUM) (unspec [(reg:SI SECRET_FIFO_REGNUM)] UNSPEC_HIPAIC_RECV_FIFO))
+  ])]
+  "TARGET_HIPAIC_EXTENDED_ARITH"
+  "hp.recv\t%0"
+  [(set_attr "type" "secret_recv")
+   (set_attr "mode" "SI")])
 
 ;;
 ;;  ....................

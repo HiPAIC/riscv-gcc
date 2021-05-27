@@ -79,7 +79,7 @@
 ;; So we keep the DFA as simple as possible.
 (define_insn_reservation "hipaic_0_secret_insns" 1
   (and (eq_attr "tune" "hipaic_0")
-       (eq_attr "type" "secret_newrand,secret_opx"))
+       (eq_attr "type" "secret_newrand,secret_opx,secret_send,secret_recv"))
   "hipaic_0_alu")
 
 ;; secret multiply is implemented with 3 cycle latency.
